@@ -3,6 +3,9 @@ import "dotenv/config";
 import cors from "cors";
 import rateLimit from "express-rate-limit";
 import { conectarBD } from "./config/db.js";
+import passport from './config/passport.js';
+
+
 import routerAuth from './routers/auth.routes.js';
 
 import swaggerUI from 'swagger-ui-express';
@@ -10,6 +13,8 @@ import swaggerUI from 'swagger-ui-express';
 // Config
 const app = express();
 app.use(express.json());
+
+app.use(passport.initialize());
 
 // Configuración de CORS
 app.use(cors({
@@ -28,7 +33,6 @@ app.use(limiter);
 
 // Rutas
 const apiV1Router = express.Router();
-
 apiV1Router.use("/auth", routerAuth);
 
 app.use("/api/v1", apiV1Router);
