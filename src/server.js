@@ -5,10 +5,10 @@ import rateLimit from "express-rate-limit";
 import { conectarBD } from "./config/db.js";
 import passport from './config/passport.js';
 
-
 import routerAuth from './routers/auth.routes.js';
 import routerCategorias from './routers/categorias.routes.js';
 import routerRestaurantes from './routers/restaurantes.routes.js';
+import routerPlatos from './routers/platos.routes.js';
 
 import swaggerUI from 'swagger-ui-express';
 
@@ -39,6 +39,7 @@ const apiV1Router = express.Router();
 apiV1Router.use("/auth", routerAuth);
 apiV1Router.use("/categorias", routerCategorias);
 apiV1Router.use("/restaurantes", routerRestaurantes);
+apiV1Router.use("/platos", routerPlatos);
 
 app.use("/api/v1", apiV1Router);
 

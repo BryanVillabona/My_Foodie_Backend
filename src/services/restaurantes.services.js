@@ -3,6 +3,7 @@ import { ObjectId } from 'mongodb';
 
 const COLECCION_RESTAURANTES = 'restaurantes';
 const COLECCION_CATEGORIAS = 'categorias';
+const COLECCION_PLATOS = 'platos';
 
 export async function crearRestaurante(datos, usuarioId) {
     const { nombre, descripcion, ubicacion, categoriaId, imagenUrl } = datos;
@@ -68,7 +69,7 @@ export async function obtenerRestaurantes(categoriaId) {
 
 export async function obtenerRestaurantePorId(id) {
     const db = obtenerBD();
-
+    
     const pipeline = [
         { $match: { _id: new ObjectId(id), estado: 'aprobado' } },
         {
@@ -77,6 +78,14 @@ export async function obtenerRestaurantePorId(id) {
                 localField: 'categoriaId',
                 foreignField: '_id',
                 as: 'categoriaInfo'
+            }
+        },
+        {
+            $lookup: {
+                from: COLECCION_PLATOS,
+                localField: '_id',
+                foreignField: 'restauranteId',
+                as: 'platos'
             }
         },
         { $unwind: '$categoriaInfo' },
