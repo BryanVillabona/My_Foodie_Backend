@@ -2,6 +2,8 @@ import { Router } from 'express';
 import * as controller from '../controllers/restaurantes.controller.js';
 import { httpCrearPlato, httpObtenerPlatosPorRestaurante } from '../controllers/platos.controller.js';
 import * as dtosPlatos from '../dtos/platos.dto.js';
+import { httpCrearReseña, httpObtenerReseñas } from '../controllers/reseñas.controller.js';
+import * as dtosReseñas from '../dtos/reseñas.dto.js';
 
 import * as dtos from '../dtos/restaurantes.dto.js';
 import { validationDTO } from '../middlewares/validationDTO.js';
@@ -84,6 +86,23 @@ router.get(
     dtos.paramIdDTO,
     validationDTO,
     httpObtenerPlatosPorRestaurante
+);
+
+//Rutas Anidadas de Reseñas
+
+router.post(
+    '/:id/reseñas',
+    autenticar, 
+    [dtos.paramIdDTO, ...dtosReseñas.crearReseñaDTO],
+    validationDTO,
+    httpCrearReseña
+);
+
+router.get(
+    '/:id/reseñas',
+    dtos.paramIdDTO,
+    validationDTO,
+    httpObtenerReseñas
 );
 
 export default router;
