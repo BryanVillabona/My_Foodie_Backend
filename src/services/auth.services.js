@@ -32,3 +32,34 @@ export async function registrarUsuario(datos) {
     
     return { message: 'Usuario registrado exitosamente.' };
 }
+
+export async function loginUsuario(credenciales) {
+    const { email, password } = credenciales;
+    
+    const db = obtenerBD();
+    const usuario = await db.collection(COLECCION_USUARIOS).findOne({ email });
+    
+    if (!usuario) {
+        throw new Error('Credenciales inválidas.');
+    }
+    
+    const esPasswordCorrecta = await bcrypt.compare(password, usuario.password);
+    
+    if (!esPasswordCorrecta) {
+        throw new Error('Credenciales inválidas.');
+    }
+
+    const payload = {
+        usuarioId: usuario._id.toString(),
+        rol: usuario.rol
+    };
+    
+    const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '1h' });
+
+    const { password: _, ...usuarioSinPassword } = usuario;
+    
+    return { 
+        token,
+        usuario: usuarioSinPassword
+    };
+}
