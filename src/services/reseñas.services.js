@@ -77,3 +77,33 @@ export async function obtenerReseñasPorRestaurante(restauranteId) {
     ];
     return await db.collection(COLECCION_RESEÑAS).aggregate(pipeline).toArray();
 }
+
+export async function actualizarReseña(reseñaId, usuarioId, datos) {
+    const db = obtenerBD();
+    const cliente = obtenerCliente();
+    const session = cliente.startSession();
+
+    try {
+        await session.withTransaction(async () => {
+            const reseña = await db.collection(COLECCION_RESEÑAS).findOne(
+                { _id: new ObjectId(reseñaId) }, { session }
+            );
+            if (!reseña) throw new Error('Reseña no encontrada.');
+
+            if (reseña.usuarioId.toString() !== usuarioId.toString()) {
+                throw new Error('No autorizado para editar esta reseña.');
+            }
+            
+            await db.collection(COLECCION_RESEÑAS).updateOne(
+                { _id: new ObjectId(reseñaId) },
+                { $set: { ...datos, fecha: new Date() } },
+                { session }
+            );
+
+            await recalcularRanking(reseña.restauranteId, session);
+        });
+        return { message: 'Reseña actualizada.' };
+    } finally {
+        await session.endSession();
+    }
+}
