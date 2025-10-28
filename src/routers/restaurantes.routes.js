@@ -20,3 +20,12 @@ router.get(
     validationDTO,
     controller.httpObtenerRestaurantePorId
 );
+
+//Rutas de Usuario Logueado
+router.post(
+    '/',
+    autenticar,
+    dtos.crearRestauranteDTO,
+    validationDTO,
+    controller.httpCrearRestaurante
+);
