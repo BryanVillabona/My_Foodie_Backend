@@ -89,3 +89,23 @@ export async function obtenerRestaurantePorId(id) {
     }
     return resultado[0];
 }
+
+//Funciones de Admin
+
+export async function obtenerRestaurantesPendientes() {
+    const db = obtenerBD();
+    const pipeline = [
+        { $match: { estado: 'pendiente' } },
+        { $sort: { createdAt: 1 } },
+        {
+            $lookup: {
+                from: COLECCION_CATEGORIAS,
+                localField: 'categoriaId',
+                foreignField: '_id',
+                as: 'categoriaInfo'
+            }
+        },
+        { $unwind: '$categoriaInfo' }
+    ];
+    return await db.collection(COLECCION_RESTAURANTES).aggregate(pipeline).toArray();
+}
