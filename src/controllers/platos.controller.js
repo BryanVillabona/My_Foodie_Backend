@@ -20,3 +20,24 @@ export async function httpObtenerPlatosPorRestaurante(req, res) {
         res.status(500).json({ error: error.message });
     }
 }
+
+export async function httpActualizarPlato(req, res) {
+    try {
+        const { id: platoId } = req.params;
+        const result = await services.actualizarPlato(platoId, req.body);
+        res.status(200).json(result);
+    } catch (error) {
+        const statusCode = error.message.includes('Plato no encontrado') ? 404 : 400;
+        res.status(statusCode).json({ error: error.message });
+    }
+}
+
+export async function httpEliminarPlato(req, res) {
+    try {
+        const { id: platoId } = req.params;
+        const result = await services.eliminarPlato(platoId);
+        res.status(200).json(result);
+    } catch (error) {
+        res.status(404).json({ error: error.message });
+    }
+}
