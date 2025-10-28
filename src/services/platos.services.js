@@ -36,3 +36,17 @@ export async function crearPlato(restauranteId, datos) {
     await db.collection(COLECCION_PLATOS).insertOne(nuevoPlato);
     return { message: 'Plato creado correctamente.', plato: nuevoPlato };
 }
+
+export async function obtenerPlatosPorRestaurante(restauranteId) {
+    const db = obtenerBD();
+    return await db.collection(COLECCION_PLATOS).find({ 
+        restauranteId: new ObjectId(restauranteId) 
+    }).toArray();
+}
+
+export async function eliminarPlato(platoId) {
+    const db = obtenerBD();
+    const resultado = await db.collection(COLECCION_PLATOS).deleteOne({ _id: new ObjectId(platoId) });
+    if (resultado.deletedCount === 0) throw new Error('Plato no encontrado.');
+    return { message: 'Plato eliminado.' };
+}
