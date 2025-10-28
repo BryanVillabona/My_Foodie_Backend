@@ -12,3 +12,10 @@ export const autenticar = (req, res, next) => {
     next();
   })(req, res, next);
 };
+
+export const autorizarAdmin = (req, res, next) => {
+  if (!req.user || req.user.rol !== 'admin') {
+    return res.status(403).json({ error: 'Acceso prohibido. Se requiere rol de administrador.' });
+  }
+  next();
+};
