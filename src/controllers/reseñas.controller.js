@@ -45,3 +45,27 @@ export async function httpEliminarReseña(req, res) {
         res.status(statusCode).json({ error: error.message });
     }
 }
+
+export async function httpLikeReseña(req, res) {
+    try {
+        const { id: reseñaId } = req.params;
+        const usuarioId = req.user._id;
+        const result = await services.likeDislikeReseña(reseñaId, usuarioId, 'like');
+        res.status(200).json(result);
+    } catch (error) {
+        const statusCode = error.message.includes('propia reseña') ? 400 : 404;
+        res.status(statusCode).json({ error: error.message });
+    }
+}
+
+export async function httpDislikeReseña(req, res) {
+    try {
+        const { id: reseñaId } = req.params;
+        const usuarioId = req.user._id;
+        const result = await services.likeDislikeReseña(reseñaId, usuarioId, 'dislike');
+        res.status(200).json(result);
+    } catch (error) {
+        const statusCode = error.message.includes('propia reseña') ? 400 : 404;
+        res.status(statusCode).json({ error: error.message });
+    }
+}
