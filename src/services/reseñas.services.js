@@ -51,3 +51,29 @@ export async function crearReseña(restauranteId, usuarioId, datos) {
         await session.endSession(); 
     }
 }
+
+export async function obtenerReseñasPorRestaurante(restauranteId) {
+    const db = obtenerBD();
+    const pipeline = [
+        { $match: { restauranteId: new ObjectId(restauranteId) } },
+        { $sort: { fecha: -1 } },
+        {
+            $lookup: {
+                from: 'usuarios',
+                localField: 'usuarioId',
+                foreignField: '_id',
+                as: 'usuarioInfo'
+            }
+        },
+        { $unwind: '$usuarioInfo' },
+        { 
+            $project: { 
+                'usuarioInfo.password': 0,
+                'usuarioInfo.email': 0,
+                'usuarioInfo.rol': 0,
+                'usuarioInfo.createdAt': 0
+            }
+        }
+    ];
+    return await db.collection(COLECCION_RESEÑAS).aggregate(pipeline).toArray();
+}
