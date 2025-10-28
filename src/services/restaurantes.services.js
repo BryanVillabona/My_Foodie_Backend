@@ -109,3 +109,13 @@ export async function obtenerRestaurantesPendientes() {
     ];
     return await db.collection(COLECCION_RESTAURANTES).aggregate(pipeline).toArray();
 }
+
+export async function aprobarRestaurante(id) {
+    const db = obtenerBD();
+    const resultado = await db.collection(COLECCION_RESTAURANTES).updateOne(
+        { _id: new ObjectId(id) },
+        { $set: { estado: 'aprobado' } }
+    );
+    if (resultado.matchedCount === 0) throw new Error('Restaurante no encontrado.');
+    return { message: 'Restaurante aprobado.' };
+}
