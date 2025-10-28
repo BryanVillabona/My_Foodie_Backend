@@ -44,6 +44,31 @@ export async function obtenerPlatosPorRestaurante(restauranteId) {
     }).toArray();
 }
 
+export async function actualizarPlato(platoId, datos) {
+    const db = obtenerBD();
+    
+    if (datos.nombre) {
+        const platoActual = await db.collection(COLECCION_PLATOS).findOne({ _id: new ObjectId(platoId) });
+        if (!platoActual) throw new Error('Plato no encontrado.');
+        
+        const platoExistente = await db.collection(COLECCION_PLATOS).findOne({
+            _id: { $ne: new ObjectId(platoId) },
+            restauranteId: platoActual.restauranteId,
+            nombre: datos.nombre
+        });
+        if (platoExistente) {
+            throw new Error('Ya existe otro plato con ese nombre en este restaurante.');
+        }
+    }
+
+    const resultado = await db.collection(COLECCION_PLATOS).updateOne(
+        { _id: new ObjectId(platoId) },
+        { $set: datos }
+    );
+    if (resultado.matchedCount === 0) throw new Error('Plato no encontrado.');
+    return { message: 'Plato actualizado.' };
+}
+
 export async function eliminarPlato(platoId) {
     const db = obtenerBD();
     const resultado = await db.collection(COLECCION_PLATOS).deleteOne({ _id: new ObjectId(platoId) });
