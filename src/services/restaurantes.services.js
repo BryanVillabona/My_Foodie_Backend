@@ -119,3 +119,21 @@ export async function aprobarRestaurante(id) {
     if (resultado.matchedCount === 0) throw new Error('Restaurante no encontrado.');
     return { message: 'Restaurante aprobado.' };
 }
+
+export async function actualizarRestaurante(id, datos) {
+    const db = obtenerBD();
+    const resultado = await db.collection(COLECCION_RESTAURANTES).updateOne(
+        { _id: new ObjectId(id) },
+        { $set: datos }
+    );
+    if (resultado.matchedCount === 0) throw new Error('Restaurante no encontrado.');
+    return { message: 'Restaurante actualizado.' };
+}
+
+export async function eliminarRestaurante(id) {
+    const db = obtenerBD();
+    
+    const resultado = await db.collection(COLECCION_RESTAURANTES).deleteOne({ _id: new ObjectId(id) });
+    if (resultado.deletedCount === 0) throw new Error('Restaurante no encontrado.');
+    return { message: 'Restaurante eliminado.' };
+}
