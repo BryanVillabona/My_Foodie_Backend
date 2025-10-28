@@ -35,3 +35,28 @@ export async function obtenerCategoriaPorId(id) {
     }
     return categoria;
 }
+
+export async function actualizarCategoria(id, datos) {
+    const { nombre, descripcion } = datos;
+    const db = obtenerBD();
+
+    if (nombre) {
+        const categoriaExistente = await db.collection(COLECCION_CATEGORIAS).findOne({ 
+            nombre, 
+            _id: { $ne: new ObjectId(id) }
+        });
+        if (categoriaExistente) {
+            throw new Error('Ya existe otra categoría con ese nombre.');
+        }
+    }
+
+    const resultado = await db.collection(COLECCION_CATEGORIAS).updateOne(
+        { _id: new ObjectId(id) },
+        { $set: { ...datos } }
+    );
+    
+    if (resultado.matchedCount === 0) {
+        throw new Error('Categoría no encontrada.');
+    }
+    return { message: 'Categoría actualizada.' };
+}
