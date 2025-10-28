@@ -135,3 +135,40 @@ export async function eliminarReseña(reseñaId, usuarioId) {
         await session.endSession();
     }
 }
+
+export async function likeDislikeReseña(reseñaId, usuarioId, tipo) {
+    const db = obtenerBD();
+    const cliente = obtenerCliente();
+    const session = cliente.startSession();
+    const userIdObj = new ObjectId(usuarioId);
+
+    try {
+        await session.withTransaction(async () => {
+            const reseña = await db.collection(COLECCION_RESEÑAS).findOne(
+                { _id: new ObjectId(reseñaId) }, { session }
+            );
+            if (!reseña) throw new Error('Reseña no encontrada.');
+
+            if (reseña.usuarioId.toString() === usuarioId.toString()) {
+                throw new Error('No puedes votar por tu propia reseña.');
+            }
+
+            const opLike = tipo === 'like' ? '$addToSet' : '$pull';
+            const opDislike = tipo === 'dislike' ? '$addToSet' : '$pull';
+
+            await db.collection(COLECCION_RESEÑAS).updateOne(
+                { _id: new ObjectId(reseñaId) },
+                { 
+                    [opLike]: { likes: userIdObj },   
+                    [opDislike]: { dislikes: userIdObj }
+                },
+                { session }
+            );
+
+            await recalcularRanking(reseña.restauranteId, session);
+        });
+        return { message: `Voto de '${tipo}' registrado.` };
+    } finally {
+        await session.endSession();
+    }
+}
