@@ -3,6 +3,7 @@ import { ObjectId } from 'mongodb';
 
 const COLECCION_RESTAURANTES = 'restaurantes';
 const COLECCION_CATEGORIAS = 'categorias';
+const COLECCION_RESEÑAS = 'reseñas';
 const COLECCION_PLATOS = 'platos';
 
 export async function crearRestaurante(datos, usuarioId) {
@@ -141,8 +142,33 @@ export async function actualizarRestaurante(id, datos) {
 
 export async function eliminarRestaurante(id) {
     const db = obtenerBD();
-    
-    const resultado = await db.collection(COLECCION_RESTAURANTES).deleteOne({ _id: new ObjectId(id) });
-    if (resultado.deletedCount === 0) throw new Error('Restaurante no encontrado.');
-    return { message: 'Restaurante eliminado.' };
+    const cliente = obtenerCliente();
+    const session = cliente.startSession();
+    const restauranteId = new ObjectId(id);
+
+    try {
+        await session.withTransaction(async () => {
+            await db.collection(COLECCION_RESEÑAS).deleteMany(
+                { restauranteId: restauranteId }, { session }
+            );
+
+            await db.collection(COLECCION_PLATOS).deleteMany(
+                { restauranteId: restauranteId }, { session }
+            );
+
+            const resultado = await db.collection(COLECCION_RESTAURANTES).deleteOne(
+                { _id: restauranteId }, { session }
+            );
+            
+            if (resultado.deletedCount === 0) {
+                throw new Error('Restaurante no encontrado.');
+            }
+        });
+        
+        return { message: 'Restaurante y todos sus datos asociados fueron eliminados.' };
+    } catch (error) {
+        throw error;
+    } finally {
+        await session.endSession();
+    }
 }

@@ -22,3 +22,7 @@ export function obtenerBD() {
   if (!db) throw new Error("No se ha conectado la BD!!");
   return db;
 }
+
+export function obtenerCliente() {
+  return cliente;
+}
