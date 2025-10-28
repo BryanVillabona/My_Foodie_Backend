@@ -3,6 +3,7 @@ import "dotenv/config";
 import cors from "cors";
 import rateLimit from "express-rate-limit";
 import { conectarBD } from "./config/db.js";
+import routerAuth from './routers/auth.routes.js';
 
 import swaggerUI from 'swagger-ui-express';
 
@@ -27,6 +28,8 @@ app.use(limiter);
 
 // Rutas
 const apiV1Router = express.Router();
+
+apiV1Router.use("/auth", routerAuth);
 
 app.use("/api/v1", apiV1Router);
 
