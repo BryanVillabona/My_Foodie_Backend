@@ -33,3 +33,28 @@ export async function httpObtenerCategoriaPorId(req, res) {
         res.status(404).json({ error: error.message }); 
     }
 }
+
+export async function httpActualizarCategoria(req, res) {
+    try {
+        const { id } = req.params;
+        const result = await actualizarCategoria(id, req.body);
+        res.status(200).json(result);
+    } catch (error) {
+        const statusCode = error.message === 'Categoría no encontrada.' ? 404 : 400;
+        res.status(statusCode).json({ error: error.message });
+    }
+}
+
+export async function httpEliminarCategoria(req, res) {
+    try {
+        const { id } = req.params;
+        const result = await eliminarCategoria(id);
+        res.status(200).json(result);
+    } catch (error) {
+        if (error.message === 'Categoría no encontrada.') {
+            res.status(404).json({ error: error.message });
+        } else {
+            res.status(400).json({ error: error.message });
+        }
+    }
+}
