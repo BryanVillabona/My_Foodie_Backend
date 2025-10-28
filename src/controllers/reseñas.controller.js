@@ -21,3 +21,27 @@ export async function httpObtenerReseñas(req, res) {
         res.status(500).json({ error: error.message });
     }
 }
+
+export async function httpActualizarReseña(req, res) {
+    try {
+        const { id: reseñaId } = req.params;
+        const usuarioId = req.user._id;
+        const result = await services.actualizarReseña(reseñaId, usuarioId, req.body);
+        res.status(200).json(result);
+    } catch (error) {
+        const statusCode = error.message.includes('No autorizado') ? 403 : 404;
+        res.status(statusCode).json({ error: error.message });
+    }
+}
+
+export async function httpEliminarReseña(req, res) {
+    try {
+        const { id: reseñaId } = req.params;
+        const usuarioId = req.user._id;
+        const result = await services.eliminarReseña(reseñaId, usuarioId);
+        res.status(200).json(result);
+    } catch (error) {
+        const statusCode = error.message.includes('No autorizado') ? 403 : 404;
+        res.status(statusCode).json({ error: error.message });
+    }
+}
