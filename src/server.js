@@ -12,6 +12,7 @@ import routerPlatos from './routers/platos.routes.js';
 import routerReseñas from './routers/reseñas.routes.js';
 
 import swaggerUI from 'swagger-ui-express';
+import { swaggerDocument } from './docs/swaggerDoc.js';
 
 // Config
 const app = express();
@@ -33,6 +34,9 @@ const limiter = rateLimit({
 	message: 'Demasiadas peticiones desde esta IP, intente de nuevo en 15 minutos.',
 });
 app.use(limiter);
+
+//Ruta para documentación api
+app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocument));
 
 // Rutas
 const apiV1Router = express.Router();
