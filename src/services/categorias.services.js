@@ -2,6 +2,7 @@ import { obtenerBD } from '../config/db.js';
 import { ObjectId } from 'mongodb';
 
 const COLECCION_CATEGORIAS = 'categorias';
+const COLECCION_RESTAURANTES = 'restaurantes';
 
 export async function crearCategoria(datos) {
     const { nombre, descripcion } = datos;
@@ -59,4 +60,24 @@ export async function actualizarCategoria(id, datos) {
         throw new Error('Categoría no encontrada.');
     }
     return { message: 'Categoría actualizada.' };
+}
+
+export async function eliminarCategoria(id) {
+    const db = obtenerBD();
+    const categoriaId = new ObjectId(id);
+
+    const restauranteAsociado = await db.collection(COLECCION_RESTAURANTES).findOne(
+        { categoriaId: categoriaId }
+    );
+
+    if (restauranteAsociado) {
+        throw new Error('No se puede eliminar la categoría, está siendo utilizada por uno o más restaurantes.');
+    }
+    
+    const resultado = await db.collection(COLECCION_CATEGORIAS).deleteOne({ _id: categoriaId });
+    
+    if (resultado.deletedCount === 0) {
+        throw new Error('Categoría no encontrada.');
+    }
+    return { message: 'Categoría eliminada.' };
 }
