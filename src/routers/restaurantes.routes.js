@@ -29,3 +29,40 @@ router.post(
     validationDTO,
     controller.httpCrearRestaurante
 );
+
+//Rutas de Administrador
+router.get(
+    '/admin/pendientes',
+    autenticar,
+    autorizarAdmin,
+    controller.httpObtenerRestaurantesPendientes
+);
+
+router.patch(
+    '/:id/aprobar',
+    autenticar,
+    autorizarAdmin,
+    dtos.paramIdDTO,
+    validationDTO,
+    controller.httpAprobarRestaurante
+);
+
+router.patch(
+    '/:id',
+    autenticar,
+    autorizarAdmin,
+    [...dtos.paramIdDTO, ...dtos.actualizarRestauranteDTO],
+    validationDTO,
+    controller.httpActualizarRestaurante
+);
+
+router.delete(
+    '/:id',
+    autenticar,
+    autorizarAdmin,
+    dtos.paramIdDTO,
+    validationDTO,
+    controller.httpEliminarRestaurante
+);
+
+export default router;
