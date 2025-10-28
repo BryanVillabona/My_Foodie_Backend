@@ -21,3 +21,17 @@ export async function crearCategoria(datos) {
     await db.collection(COLECCION_CATEGORIAS).insertOne(nuevaCategoria);
     return { message: 'Categoría creada correctamente.', categoria: nuevaCategoria };
 }
+
+export async function obtenerCategorias() {
+    const db = obtenerBD();
+    return await db.collection(COLECCION_CATEGORIAS).find().toArray();
+}
+
+export async function obtenerCategoriaPorId(id) {
+    const db = obtenerBD();
+    const categoria = await db.collection(COLECCION_CATEGORIAS).findOne({ _id: new ObjectId(id) });
+    if (!categoria) {
+        throw new Error('Categoría no encontrada.');
+    }
+    return categoria;
+}
