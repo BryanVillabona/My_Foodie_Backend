@@ -45,7 +45,7 @@ apiV1Router.use("/auth", routerAuth);
 apiV1Router.use("/categorias", routerCategorias);
 apiV1Router.use("/restaurantes", routerRestaurantes);
 apiV1Router.use("/platos", routerPlatos);
-apiV1Router.use("/reseñas", routerReseñas);
+apiV1Router.use("/resenas", routerReseñas);
 
 app.use("/api/v1", apiV1Router);
 

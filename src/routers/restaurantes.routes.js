@@ -91,7 +91,7 @@ router.get(
 //Rutas Anidadas de Reseñas
 
 router.post(
-    '/:id/reseñas',
+    '/:id/resenas',
     autenticar, 
     [dtos.paramIdDTO, ...dtosReseñas.crearReseñaDTO],
     validationDTO,
@@ -99,7 +99,7 @@ router.post(
 );
 
 router.get(
-    '/:id/reseñas',
+    '/:id/resenas',
     dtos.paramIdDTO,
     validationDTO,
     httpObtenerReseñas
