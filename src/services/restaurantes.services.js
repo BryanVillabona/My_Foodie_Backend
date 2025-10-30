@@ -41,14 +41,16 @@ export async function obtenerRestaurantes(categoriaId, sort = 'ranking') {
     
     const matchStage = { estado: 'aprobado' };
     
+    // 1. Filtrado por Categoría (¡Esto SÍ funciona!)
     if (categoriaId) {
         matchStage.categoriaId = new ObjectId(categoriaId);
     }
     
     const pipeline = [
         { $match: matchStage },
+        // 2. Lógica para contar reseñas (para ordenar por popularidad)
         {
-            $lookup: { 
+            $lookup: {
                 from: COLECCION_RESEÑAS,
                 localField: '_id',
                 foreignField: 'restauranteId',
@@ -56,23 +58,25 @@ export async function obtenerRestaurantes(categoriaId, sort = 'ranking') {
             }
         },
         {
-            $addFields: { 
+            $addFields: {
                 totalReseñas: { $size: '$reseñas' }
             }
         }
     ];
 
+    // 3. Lógica de Ordenamiento Dinámico
     let sortStage = {};
     if (sort === 'popularidad') {
         sortStage = { $sort: { totalReseñas: -1, rankingPonderado: -1 } };
     } else if (sort === 'recientes') {
         sortStage = { $sort: { createdAt: -1 } };
-    } else { 
+    } else { // 'ranking' es el default
         sortStage = { $sort: { rankingPonderado: -1, createdAt: -1 } };
     }
     
-    pipeline.push(sortStage); 
+    pipeline.push(sortStage);
 
+    // 4. Lógica para traer info de Categoría
     pipeline.push(
         {
             $lookup: {
@@ -83,11 +87,27 @@ export async function obtenerRestaurantes(categoriaId, sort = 'ranking') {
             }
         },
         { $unwind: '$categoriaInfo' },
+
+        // 5. Proyección Final (¡LA CORRECCIÓN!)
+        // Modo de Inclusión: especificamos SOLO los campos que queremos.
         { 
             $project: { 
-                'categoriaInfo.descripcion': 0,
-                'categoriaInfo.createdAt': 0,
-                'reseñas': 0
+                _id: 1,
+                nombre: 1,
+                descripcion: 1,
+                ubicacion: 1,
+                imagenUrl: 1,
+                estado: 1,
+                rankingPonderado: 1,
+                createdAt: 1,
+                categoriaId: 1, // <-- El campo que faltaba y causaba el bug del filtro
+                totalReseñas: 1,
+                // Remodelamos categoriaInfo para enviar solo lo necesario
+                categoriaInfo: {
+                    _id: "$categoriaInfo._id",
+                    nombre: "$categoriaInfo.nombre"
+                }
+                // El campo 'reseñas' se excluye automáticamente
             }
         }
     );
