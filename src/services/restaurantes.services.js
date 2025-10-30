@@ -1,4 +1,4 @@
-import { obtenerBD } from '../config/db.js';
+import { obtenerBD, obtenerCliente } from '../config/db.js';
 import { ObjectId } from 'mongodb';
 
 const COLECCION_RESTAURANTES = 'restaurantes';
@@ -132,10 +132,18 @@ export async function aprobarRestaurante(id) {
 
 export async function actualizarRestaurante(id, datos) {
     const db = obtenerBD();
+    
+    const datosActualizar = { ...datos };
+
+    if (datosActualizar.categoriaId) {
+        datosActualizar.categoriaId = new ObjectId(datosActualizar.categoriaId);
+    }
+
     const resultado = await db.collection(COLECCION_RESTAURANTES).updateOne(
         { _id: new ObjectId(id) },
-        { $set: datos }
+        { $set: datosActualizar }
     );
+    
     if (resultado.matchedCount === 0) throw new Error('Restaurante no encontrado.');
     return { message: 'Restaurante actualizado.' };
 }

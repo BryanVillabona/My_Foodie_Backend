@@ -67,6 +67,10 @@ export async function httpEliminarRestaurante(req, res) {
         const result = await services.eliminarRestaurante(id);
         res.status(200).json(result);
     } catch (error) {
-        res.status(404).json({ error: error.message });
+        if (error.message.includes('Restaurante no encontrado')) {
+            res.status(404).json({ error: error.message });
+        } else {
+            res.status(500).json({ error: error.message });
+        }
     }
 }
