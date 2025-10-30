@@ -51,7 +51,8 @@ export async function loginUsuario(credenciales) {
 
     const payload = {
         usuarioId: usuario._id.toString(),
-        rol: usuario.rol
+        rol: usuario.rol,
+        nombre: usuario.nombre
     };
     
     const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '1h' });
