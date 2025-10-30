@@ -10,10 +10,11 @@ import routerCategorias from './routers/categorias.routes.js';
 import routerRestaurantes from './routers/restaurantes.routes.js';
 import routerPlatos from './routers/platos.routes.js';
 import routerReseñas from './routers/reseñas.routes.js';
-import routerUsuarios from './routers/usuarios.routes.js'; // <-- AÑADE ESTA LÍNEA
+import routerUsuarios from './routers/usuarios.routes.js';
 
 import swaggerUI from 'swagger-ui-express';
-import { swaggerDocument } from './docs/swaggerDoc.js';
+import { swaggerDocument, APP_VERSION_STRING } from './docs/swaggerDoc.js';
+import semver from 'semver';
 
 // Config
 const app = express();
@@ -52,7 +53,10 @@ apiV1Router.use("/usuarios", routerUsuarios);
 app.use("/api/v1", apiV1Router);
 
 app.get("/health", (req, res) => {
-  res.status(200).json({ message: "My Foodie Backend activo!!!", version: "1.0.0" });
+  res.status(200).json({ 
+    message: "My Foodie Backend activo!!!", 
+    version: semver.clean(APP_VERSION_STRING) 
+  });
 });
 
 // Executions

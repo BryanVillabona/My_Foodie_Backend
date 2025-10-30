@@ -10,11 +10,13 @@ const packageJsonPath = path.resolve(__dirname, '..', '..', 'package.json');
 const packageJsonContent = fs.readFileSync(packageJsonPath, 'utf8');
 const packageJson = JSON.parse(packageJsonContent);
 
+export const APP_VERSION_STRING = packageJson.version;
+
 export const swaggerDocument = {
   openapi: "3.0.0",
   info: {
     title: "My Foodie API",
-    version: packageJson.version, 
+    version: APP_VERSION_STRING,
     description: "API para calificar y rankear restaurantes y platos."
   },
   servers: [
