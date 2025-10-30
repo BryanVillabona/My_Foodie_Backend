@@ -41,14 +41,12 @@ export async function obtenerRestaurantes(categoriaId, sort = 'ranking') {
     
     const matchStage = { estado: 'aprobado' };
     
-    // 1. Filtrado por Categoría (¡Esto SÍ funciona!)
     if (categoriaId) {
         matchStage.categoriaId = new ObjectId(categoriaId);
     }
     
     const pipeline = [
         { $match: matchStage },
-        // 2. Lógica para contar reseñas (para ordenar por popularidad)
         {
             $lookup: {
                 from: COLECCION_RESEÑAS,
@@ -64,19 +62,17 @@ export async function obtenerRestaurantes(categoriaId, sort = 'ranking') {
         }
     ];
 
-    // 3. Lógica de Ordenamiento Dinámico
     let sortStage = {};
     if (sort === 'popularidad') {
         sortStage = { $sort: { totalReseñas: -1, rankingPonderado: -1 } };
     } else if (sort === 'recientes') {
         sortStage = { $sort: { createdAt: -1 } };
-    } else { // 'ranking' es el default
+    } else { 
         sortStage = { $sort: { rankingPonderado: -1, createdAt: -1 } };
     }
     
     pipeline.push(sortStage);
 
-    // 4. Lógica para traer info de Categoría
     pipeline.push(
         {
             $lookup: {
@@ -88,8 +84,6 @@ export async function obtenerRestaurantes(categoriaId, sort = 'ranking') {
         },
         { $unwind: '$categoriaInfo' },
 
-        // 5. Proyección Final (¡LA CORRECCIÓN!)
-        // Modo de Inclusión: especificamos SOLO los campos que queremos.
         { 
             $project: { 
                 _id: 1,
@@ -100,14 +94,12 @@ export async function obtenerRestaurantes(categoriaId, sort = 'ranking') {
                 estado: 1,
                 rankingPonderado: 1,
                 createdAt: 1,
-                categoriaId: 1, // <-- El campo que faltaba y causaba el bug del filtro
+                categoriaId: 1,
                 totalReseñas: 1,
-                // Remodelamos categoriaInfo para enviar solo lo necesario
                 categoriaInfo: {
                     _id: "$categoriaInfo._id",
                     nombre: "$categoriaInfo.nombre"
                 }
-                // El campo 'reseñas' se excluye automáticamente
             }
         }
     );
