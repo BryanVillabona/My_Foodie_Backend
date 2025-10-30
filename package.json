@@ -1,6 +1,6 @@
 {
   "name": "my-foodie-backend",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "API para calificar y rankear restaurantes y platos.",
   "main": "src/server.js",
   "type": "module",
