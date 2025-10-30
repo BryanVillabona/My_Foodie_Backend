@@ -7,7 +7,12 @@ export const paramIdDTO = [
 export const queryCategoriaDTO = [
     query('categoria')
         .optional()
-        .isMongoId().withMessage('El ID de la categoría no es válido.')
+        .isMongoId().withMessage('El ID de la categoría no es válido.'),
+    
+    query('sort')
+        .optional()
+        .isIn(['ranking', 'popularidad', 'recientes'])
+        .withMessage("Sort debe ser 'ranking', 'popularidad' o 'recientes'.")
 ];
 
 export const crearRestauranteDTO = [

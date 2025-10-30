@@ -10,6 +10,7 @@ import routerCategorias from './routers/categorias.routes.js';
 import routerRestaurantes from './routers/restaurantes.routes.js';
 import routerPlatos from './routers/platos.routes.js';
 import routerReseñas from './routers/reseñas.routes.js';
+import routerUsuarios from './routers/usuarios.routes.js'; // <-- AÑADE ESTA LÍNEA
 
 import swaggerUI from 'swagger-ui-express';
 import { swaggerDocument } from './docs/swaggerDoc.js';
@@ -46,6 +47,7 @@ apiV1Router.use("/categorias", routerCategorias);
 apiV1Router.use("/restaurantes", routerRestaurantes);
 apiV1Router.use("/platos", routerPlatos);
 apiV1Router.use("/resenas", routerReseñas);
+apiV1Router.use("/usuarios", routerUsuarios);
 
 app.use("/api/v1", apiV1Router);
 

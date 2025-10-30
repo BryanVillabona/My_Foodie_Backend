@@ -2,8 +2,8 @@ import * as services from '../services/restaurantes.services.js';
 
 export async function httpObtenerRestaurantes(req, res) {
     try {
-        const { categoria } = req.query;
-        const restaurantes = await services.obtenerRestaurantes(categoria);
+        const { categoria, sort } = req.query; 
+        const restaurantes = await services.obtenerRestaurantes(categoria, sort); 
         res.status(200).json(restaurantes);
     } catch (error) {
         res.status(500).json({ error: error.message });

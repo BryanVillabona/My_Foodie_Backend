@@ -36,7 +36,7 @@ export async function crearRestaurante(datos, usuarioId) {
     return { message: 'Restaurante propuesto. Pendiente de aprobación.', restaurante: nuevoRestaurante };
 }
 
-export async function obtenerRestaurantes(categoriaId) {
+export async function obtenerRestaurantes(categoriaId, sort = 'ranking') {
     const db = obtenerBD();
     
     const matchStage = { estado: 'aprobado' };
@@ -47,7 +47,33 @@ export async function obtenerRestaurantes(categoriaId) {
     
     const pipeline = [
         { $match: matchStage },
-        { $sort: { rankingPonderado: -1, createdAt: -1 } },
+        {
+            $lookup: { 
+                from: COLECCION_RESEÑAS,
+                localField: '_id',
+                foreignField: 'restauranteId',
+                as: 'reseñas'
+            }
+        },
+        {
+            $addFields: { 
+                totalReseñas: { $size: '$reseñas' }
+            }
+        }
+    ];
+
+    let sortStage = {};
+    if (sort === 'popularidad') {
+        sortStage = { $sort: { totalReseñas: -1, rankingPonderado: -1 } };
+    } else if (sort === 'recientes') {
+        sortStage = { $sort: { createdAt: -1 } };
+    } else { 
+        sortStage = { $sort: { rankingPonderado: -1, createdAt: -1 } };
+    }
+    
+    pipeline.push(sortStage); 
+
+    pipeline.push(
         {
             $lookup: {
                 from: COLECCION_CATEGORIAS,
@@ -60,10 +86,11 @@ export async function obtenerRestaurantes(categoriaId) {
         { 
             $project: { 
                 'categoriaInfo.descripcion': 0,
-                'categoriaInfo.createdAt': 0 
+                'categoriaInfo.createdAt': 0,
+                'reseñas': 0
             }
         }
-    ];
+    );
 
     return await db.collection(COLECCION_RESTAURANTES).aggregate(pipeline).toArray();
 }
