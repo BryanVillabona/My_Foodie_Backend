@@ -152,6 +152,45 @@ export const swaggerDocument = {
         properties: {
           error: { type: "string", example: "Mensaje de error descriptivo." }
         }
+      },
+      UsuarioStats: {
+        type: "object",
+        description: "Estadísticas del usuario.",
+        properties: {
+          totalReseñas: { type: "integer", example: 5 },
+          promedio: { type: "string", example: "4.2" },
+          favorito: { type: "string", example: "El Corral" }
+        }
+      },
+      RestauranteInfoSimple: {
+        type: "object",
+        description: "Información básica de un restaurante anidada en una reseña.",
+        properties: {
+          _id: { type: "string", example: "663d5a9b8f2d1e1a3c7b8e1a" },
+          nombre: { type: "string", example: "El Corral" },
+          ubicacion: { type: "string", example: "Calle Falsa 123" },
+          categoriaId: { type: "string", example: "663d5a9b8f2d1e1a3c7b8e1f" },
+          imagenUrl: { type: "string", example: "https://ejemplo.com/imagen.png" },
+          rankingPonderado: { type: "number", example: 25.5 },
+          createdAt: { type: "string", format: "date-time" }
+        }
+      },
+      ReseñaConRestaurante: {
+        type: "object",
+        description: "Una reseña completa con la información del restaurante anidada.",
+        properties: {
+          _id: { type: "string", example: "663d5a9b8f2d1e1a3c7b8f1b" },
+          restauranteId: { type: "string", example: "663d5a9b8f2d1e1a3c7b8e1a" },
+          usuarioId: { type: "string", example: "663d5a9b8f2d1e1a3c7b8e1c" },
+          comentario: { type: "string", example: "¡Muy bueno!" },
+          calificacion: { type: "integer", example: 5 },
+          fecha: { type: "string", format: "date-time" },
+          likes: { type: "array", items: { type: "string" } },
+          dislikes: { type: "array", items: { type: "string" } },
+          restauranteInfo: { 
+            "$ref": "#/components/schemas/RestauranteInfoSimple"
+          }
+        }
       }
     }
   },
@@ -190,7 +229,53 @@ export const swaggerDocument = {
         }
       }
     },
-    
+    "/usuarios/mis-stats": {
+      get: {
+        tags: ["Usuarios"],
+        summary: "[Cliente] Obtener estadísticas del usuario logueado",
+        description: "Devuelve el total de reseñas, el promedio de calificación y el restaurante favorito del usuario.",
+        security: [{ BearerAuth: [] }],
+        responses: {
+          "200": { 
+            description: "Estadísticas del usuario.",
+            content: { 
+              "application/json": { 
+                schema: { "$ref": "#/components/schemas/UsuarioStats" } 
+              } 
+            }
+          },
+          "401": { 
+            description: "No autorizado.",
+            content: { "application/json": { schema: { "$ref": "#/components/schemas/ErrorResponse" } } }
+          }
+        }
+      }
+    },
+    "/usuarios/mis-resenas": {
+      get: {
+        tags: ["Usuarios"],
+        summary: "[Cliente] Obtener mis reseñas publicadas",
+        description: "Devuelve una lista de todas las reseñas que el usuario logueado ha creado, con información del restaurante.",
+        security: [{ BearerAuth: [] }],
+        responses: {
+          "200": { 
+            description: "Lista de reseñas del usuario.",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "array",
+                  items: { "$ref": "#/components/schemas/ReseñaConRestaurante" }
+                }
+              }
+            }
+          },
+          "401": { 
+            description: "No autorizado.",
+            content: { "application/json": { schema: { "$ref": "#/components/schemas/ErrorResponse" } } }
+          }
+        }
+      }
+    },   
     "/categorias": {
       get: {
         tags: ["Categorías"],
@@ -424,6 +509,7 @@ export const swaggerDocument = {
     { name: "Categorías", description: "Gestión de categorías de restaurantes" },
     { name: "Restaurantes", description: "Gestión de restaurantes y aprobaciones" },
     { name: "Platos", description: "Gestión de platos de restaurantes" },
-    { name: "Reseñas", description: "Gestión de reseñas, calificaciones y likes/dislikes" }
+    { name: "Reseñas", description: "Gestión de reseñas, calificaciones y likes/dislikes" },
+    { name: "Usuarios", description: "Operaciones del perfil de usuario" }
   ]
 };
