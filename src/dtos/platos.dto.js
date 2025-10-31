@@ -12,7 +12,7 @@ export const crearPlatoDTO = [
     body('precio')
         .isFloat({ gt: 0 }).withMessage('El precio debe ser un número positivo.'),
     body('imagenUrl')
-        .optional()
+        .optional({ checkFalsy: true })
         .isURL().withMessage('La imagen debe ser una URL válida.')
 ];
 
@@ -27,6 +27,6 @@ export const actualizarPlatoDTO = [
         .optional()
         .isFloat({ gt: 0 }).withMessage('El precio debe ser un número positivo.'),
     body('imagenUrl')
-        .optional()
+        .optional({ checkFalsy: true })
         .isURL().withMessage('La imagen debe ser una URL válida.')
 ];

@@ -25,7 +25,7 @@ export const crearRestauranteDTO = [
     body('categoriaId')
         .isMongoId().withMessage('El ID de la categoría no es válido.'),
     body('imagenUrl')
-        .optional()
+        .optional({ checkFalsy: true })
         .isURL().withMessage('La imagen debe ser una URL válida.')
 ];
 
@@ -43,7 +43,7 @@ export const actualizarRestauranteDTO = [
         .optional()
         .isMongoId().withMessage('El ID de la categoría no es válido.'),
     body('imagenUrl')
-        .optional()
+        .optional({ checkFalsy: true })
         .isURL().withMessage('La imagen debe ser una URL válida.'),
     body('estado')
         .optional()

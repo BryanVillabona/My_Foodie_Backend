@@ -3,6 +3,9 @@ import { ObjectId } from 'mongodb';
 import bcrypt from 'bcrypt';
 import { recalcularRanking } from './utils/ranking.js';
 
+const PLACEHOLDER_RESTAURANTE_IMG = 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=1000&h=400&fit=crop';
+const PLACEHOLDER_PLATO_IMG = 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=400&fit=crop';
+
 const COLECCION_USUARIOS = 'usuarios';
 const COLECCION_CATEGORIAS = 'categorias';
 const COLECCION_RESTAURANTES = 'restaurantes';
@@ -48,27 +51,32 @@ async function seed() {
         { nombre: "Asiática", descripcion: "Sushi, ramen, wok." },
         { nombre: "Vegetariana/Vegana", descripcion: "Opciones sin carne." }
     ];
-    const categoriasInsertadas = await db.collection(COLECCION_CATEGORIAS).insertMany(
+    const categoriasInsertados = await db.collection(COLECCION_CATEGORIAS).insertMany(
         categoriasData.map(c => ({ ...c, createdAt: new Date() }))
     );
-    const catTipicaId = categoriasInsertadas.insertedIds['0'];
-    const catRapidaId = categoriasInsertadas.insertedIds['1'];
-    const catItalianaId = categoriasInsertadas.insertedIds['2'];
-    const catAsiaticaId = categoriasInsertadas.insertedIds['3'];
-    const catVegId = categoriasInsertadas.insertedIds['4'];
-    console.log(` -> ${Object.keys(categoriasInsertadas.insertedIds).length} categorías creadas.`);
+    const catTipicaId = categoriasInsertados.insertedIds['0'];
+    const catRapidaId = categoriasInsertados.insertedIds['1'];
+    const catItalianaId = categoriasInsertados.insertedIds['2'];
+    const catAsiaticaId = categoriasInsertados.insertedIds['3'];
+    const catVegId = categoriasInsertados.insertedIds['4'];
+    console.log(` -> ${Object.keys(categoriasInsertados.insertedIds).length} categorías creadas.`);
 
     console.log("Creando restaurantes...");
     const restaurantesData = [
-        { nombre: "Andrés Carne de Res (Chía)", descripcion: "Experiencia culinaria y cultural única.", ubicacion: "Chía, Cundinamarca", categoriaId: catTipicaId, creadoPor: anaId, estado: "aprobado", imagenUrl: "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/0e/4f/2e/43/entrada-andres-carne.jpg?w=1200&h=-1&s=1" },
-        { nombre: "El Cielo", descripcion: "Cocina creativa y moderna colombiana.", ubicacion: "Medellín, Antioquia", categoriaId: catTipicaId, creadoPor: carlosId, estado: "aprobado", imagenUrl: "https://media-cdn.tripadvisor.com/media/photo-s/0e/c6/f9/7d/elcielo-hotel.jpg" },
-        { nombre: "Home Burgers", descripcion: "Hamburguesas artesanales y malteadas.", ubicacion: "Bogotá D.C.", categoriaId: catRapidaId, creadoPor: sofiaId, estado: "aprobado", imagenUrl: "https://www.homeburgers.com/uploads/locations/images/_og/homeburgers-nqs.jpg" },
-        { nombre: "Archie's", descripcion: "Pizzas, pastas y comida italiana en ambiente familiar.", ubicacion: "Varias ciudades", categoriaId: catItalianaId, creadoPor: anaId, estado: "aprobado", imagenUrl: "https://archies.co/wp-content/uploads/2023/10/archies-restaurante-portada-2.webp" },
-        { nombre: "Wok", descripcion: "Comida asiática variada, sushi y curries.", ubicacion: "Varias ciudades", categoriaId: catAsiaticaId, creadoPor: carlosId, estado: "aprobado", imagenUrl: "https://images.squarespace-cdn.com/content/v1/5af3328e3917ee986e10787e/1557002621021-Y2F8074N2O72N1584U6L/Wok_Andina_Fachada.jpg" },
-        { nombre: "Restaurante Vegetariano El Integral", descripcion: "Opciones vegetarianas y veganas saludables.", ubicacion: "Bucaramanga, Santander", categoriaId: catVegId, creadoPor: sofiaId, estado: "pendiente", imagenUrl: "" }, // Pendiente
+        { nombre: "Andrés Carne de Res (Chía)", descripcion: "Experiencia culinaria y cultural única.", ubicacion: "Chía, Cundinamarca", categoriaId: catTipicaId, creadoPor: anaId, estado: "aprobado", imagenUrl: PLACEHOLDER_RESTAURANTE_IMG },
+        { nombre: "El Cielo", descripcion: "Cocina creativa y moderna colombiana.", ubicacion: "Medellín, Antioquia", categoriaId: catTipicaId, creadoPor: carlosId, estado: "aprobado", imagenUrl: PLACEHOLDER_RESTAURANTE_IMG },
+        { nombre: "Home Burgers", descripcion: "Hamburguesas artesanales y malteadas.", ubicacion: "Bogotá D.C.", categoriaId: catRapidaId, creadoPor: sofiaId, estado: "aprobado", imagenUrl: PLACEHOLDER_RESTAURANTE_IMG },
+        { nombre: "Archie's", descripcion: "Pizzas, pastas y comida italiana en ambiente familiar.", ubicacion: "Varias ciudades", categoriaId: catItalianaId, creadoPor: anaId, estado: "aprobado", imagenUrl: PLACEHOLDER_RESTAURANTE_IMG },
+        { nombre: "Wok", descripcion: "Comida asiática variada, sushi y curries.", ubicacion: "Varias ciudades", categoriaId: catAsiaticaId, creadoPor: carlosId, estado: "aprobado", imagenUrl: PLACEHOLDER_RESTAURANTE_IMG },
+        { nombre: "Restaurante Vegetariano El Integral", descripcion: "Opciones vegetarianas y veganas saludables.", ubicacion: "Bucaramanga, Santander", categoriaId: catVegId, creadoPor: sofiaId, estado: "pendiente", imagenUrl: PLACEHOLDER_RESTAURANTE_IMG },
     ];
     const restaurantesInsertados = await db.collection(COLECCION_RESTAURANTES).insertMany(
-        restaurantesData.map(r => ({ ...r, rankingPonderado: 0, createdAt: new Date() }))
+        restaurantesData.map(r => ({ 
+            ...r, 
+            imagenUrl: r.imagenUrl || PLACEHOLDER_RESTAURANTE_IMG,
+            rankingPonderado: 0, 
+            createdAt: new Date() 
+        }))
     );
     const andresId = restaurantesInsertados.insertedIds['0'];
     const cieloId = restaurantesInsertados.insertedIds['1'];
@@ -90,7 +98,11 @@ async function seed() {
         { restauranteId: wokId, nombre: "Pad Thai", descripcion: "Fideos de arroz salteados con camarones, tofu y maní.", precio: 42000 },
     ];
     await db.collection(COLECCION_PLATOS).insertMany(
-        platosData.map(p => ({ ...p, createdAt: new Date() }))
+        platosData.map(p => ({ 
+            ...p, 
+            imagenUrl: p.imagenUrl || PLACEHOLDER_PLATO_IMG,
+            createdAt: new Date() 
+        }))
     );
     console.log(` -> ${platosData.length} platos creados.`);
 
@@ -125,7 +137,6 @@ async function seed() {
     } finally {
         await session.endSession();
     }
-
 
     console.log("\nBase de datos poblada y lista para usar.");
     process.exit();

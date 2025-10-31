@@ -4,6 +4,8 @@ import { ObjectId } from 'mongodb';
 const COLECCION_PLATOS = 'platos';
 const COLECCION_RESTAURANTES = 'restaurantes';
 
+const PLACEHOLDER_PLATO_IMG = 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=400&fit=crop';
+
 export async function crearPlato(restauranteId, datos) {
     const { nombre, descripcion, precio, imagenUrl } = datos;
     const db = obtenerBD();
@@ -29,7 +31,7 @@ export async function crearPlato(restauranteId, datos) {
         nombre,
         descripcion,
         precio,
-        imagenUrl: imagenUrl || '',
+        imagenUrl: imagenUrl || PLACEHOLDER_PLATO_IMG,
         createdAt: new Date()
     };
 
@@ -46,24 +48,30 @@ export async function obtenerPlatosPorRestaurante(restauranteId) {
 
 export async function actualizarPlato(platoId, datos) {
     const db = obtenerBD();
+
+    const datosActualizar = { ...datos };
     
-    if (datos.nombre) {
+    if (datosActualizar.nombre) {
         const platoActual = await db.collection(COLECCION_PLATOS).findOne({ _id: new ObjectId(platoId) });
         if (!platoActual) throw new Error('Plato no encontrado.');
         
         const platoExistente = await db.collection(COLECCION_PLATOS).findOne({
             _id: { $ne: new ObjectId(platoId) },
             restauranteId: platoActual.restauranteId,
-            nombre: datos.nombre
+            nombre: datosActualizar.nombre
         });
         if (platoExistente) {
             throw new Error('Ya existe otro plato con ese nombre en este restaurante.');
         }
     }
 
+    if (datosActualizar.imagenUrl === null || datosActualizar.imagenUrl === '') {
+        datosActualizar.imagenUrl = PLACEHOLDER_PLATO_IMG;
+    }
+
     const resultado = await db.collection(COLECCION_PLATOS).updateOne(
         { _id: new ObjectId(platoId) },
-        { $set: datos }
+        { $set: datosActualizar }
     );
     if (resultado.matchedCount === 0) throw new Error('Plato no encontrado.');
     return { message: 'Plato actualizado.' };

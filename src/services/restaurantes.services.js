@@ -6,6 +6,8 @@ const COLECCION_CATEGORIAS = 'categorias';
 const COLECCION_RESEÑAS = 'reseñas';
 const COLECCION_PLATOS = 'platos';
 
+const PLACEHOLDER_RESTAURANTE_IMG = 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=1000&h=400&fit=crop';
+
 export async function crearRestaurante(datos, usuarioId) {
     const { nombre, descripcion, ubicacion, categoriaId, imagenUrl } = datos;
     const db = obtenerBD();
@@ -25,7 +27,7 @@ export async function crearRestaurante(datos, usuarioId) {
         descripcion,
         ubicacion,
         categoriaId: new ObjectId(categoriaId),
-        imagenUrl: imagenUrl || '',
+        imagenUrl: imagenUrl || PLACEHOLDER_RESTAURANTE_IMG,
         creadoPor: new ObjectId(usuarioId),
         estado: 'pendiente',
         rankingPonderado: 0, 
@@ -176,6 +178,10 @@ export async function actualizarRestaurante(id, datos) {
 
     if (datosActualizar.categoriaId) {
         datosActualizar.categoriaId = new ObjectId(datosActualizar.categoriaId);
+    }
+
+    if (datosActualizar.imagenUrl === null || datosActualizar.imagenUrl === '') {
+        datosActualizar.imagenUrl = PLACEHOLDER_RESTAURANTE_IMG;
     }
 
     const resultado = await db.collection(COLECCION_RESTAURANTES).updateOne(

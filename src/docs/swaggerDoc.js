@@ -422,6 +422,8 @@ export const swaggerDocument = {
         responses: { "201": { description: "Plato creado." } }
       }
     },
+
+
     "/platos/{id}": {
       patch: {
         tags: ["Platos"],
@@ -431,14 +433,25 @@ export const swaggerDocument = {
         requestBody: {
           content: { "application/json": { schema: { "$ref": "#/components/schemas/PlatoUpdateInput" } } }
         },
-        responses: { "200": { description: "Plato actualizado." } }
+        responses: { 
+          "200": { description: "Plato actualizado." },
+          "400": { description: "Datos inválidos (ej. nombre duplicado)." },
+          "401": { description: "No autorizado." },
+          "403": { description: "Acceso prohibido (No admin)." },
+          "404": { description: "Plato no encontrado." }
+        }
       },
       delete: {
         tags: ["Platos"],
         summary: "[Admin] Eliminar un plato",
         security: [{ BearerAuth: [] }], 
         parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" }, description: "ID del Plato" }],
-        responses: { "200": { description: "Plato eliminado." } }
+        responses: { 
+          "200": { description: "Plato eliminado." },
+          "401": { description: "No autorizado." },
+          "403": { description: "Acceso prohibido (No admin)." },
+          "404": { description: "Plato no encontrado." }
+        }
       }
     },
 
