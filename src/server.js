@@ -32,7 +32,7 @@ app.use(cors({
 // Rate Limiter
 const limiter = rateLimit({
 	windowMs: 15 * 60 * 1000, 
-	max: 100, 
+	max: 1000, 
 	message: 'Demasiadas peticiones desde esta IP, intente de nuevo en 15 minutos.',
 });
 app.use(limiter);
