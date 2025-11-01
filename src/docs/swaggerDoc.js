@@ -21,8 +21,8 @@ export const swaggerDocument = {
   },
   servers: [
     {
-      url: `http://${process.env.HOST_NAME || 'localhost'}:${process.env.PORT || 4000}/api/v1`,
-      description: "Servidor local de desarrollo"
+      url: `${process.env.RENDER_EXTERNAL_URL || `http://${process.env.HOST_NAME || 'localhost'}:${process.env.PORT || 4000}`}/api/v1`,
+      description: process.env.RENDER_EXTERNAL_URL ? "Servidor de Producción (Render)" : "Servidor local de desarrollo"
     }
   ],
   
