@@ -802,11 +802,16 @@ Recalcula el ranking (Transaccional).
 ```
 
 ---
-
+# 📚 Documentación
+A continuación se presenta la documentación pertinente acerca de este proyecto:
+1. [Documentación My Foodie](https://drive.google.com/file/d/1Cfc62Wa4C-18MxyGDZE945p-1gNmbw1W/view?usp=sharing)
+2. [Manual de usuario My Foodie](https://drive.google.com/file/d/1-Fiiikn1asZVWeYhBTTPTOBUfFqM_O1q/view?usp=sharing)
+3. [Especificación de requisitos de Software](https://drive.google.com/file/d/1vdKAKPV3AWIox3Z8Nyocg6T4kWTtndud/view?usp=sharing)
+---
 # 🔗 Repositorio del Frontend
 El frontend de esta aplicación, desarrollado con **HTML**, **CSS** y **JavaScript puro**, se encuentra en un repositorio separado:
 
-▶️ **Ver Repositorio del Frontend (placeholder)**
+[▶️ **Ver Repositorio del Frontend**](https://github.com/sergiosteven66/My_Foodie_Frontend.git)
 
 ---
 
