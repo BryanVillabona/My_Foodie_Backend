@@ -5,6 +5,12 @@ import { autenticar } from '../middlewares/auth.middleware.js';
 const router = Router();
 
 router.get(
+    '/mis-notificaciones',
+    autenticar,
+    controller.httpGetMisnotificaciones
+);
+
+router.get(
     '/mis-resenas',
     autenticar,
     controller.httpGetMisReseñas

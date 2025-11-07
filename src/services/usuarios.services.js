@@ -5,7 +5,11 @@ const COLECCION_RESEÑAS = 'reseñas';
 const COLECCION_RESTAURANTES = 'restaurantes';
 
 export async function obtenernotificacionuser(usuarioId) {
-    
+    const db = obtenerBD();
+    const pipeline = [
+        { $match: { usuarioId: new ObjectId(usuarioId) } },
+        { $sort: { fecha: -1 } },
+        {
     
 }
 
