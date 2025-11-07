@@ -4,6 +4,12 @@ import { ObjectId } from 'mongodb';
 const COLECCION_RESEÑAS = 'reseñas';
 const COLECCION_RESTAURANTES = 'restaurantes';
 
+export async function obtenernotificacionuser(usuarioId) {
+    
+    
+}
+
+
 export async function obtenerMisReseñas(usuarioId) {
     const db = obtenerBD();
     const pipeline = [
